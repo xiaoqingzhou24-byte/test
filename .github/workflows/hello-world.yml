@@ -1,14 +1,17 @@
-name: My First Action  # 工作流的名字
+name: Print Changed Files
 
-on: [push]             # 触发条件：当有代码 push 到仓库时执行
+on: [push]
 
 jobs:
-  say-hello:           # 任务 ID
-    runs-on: ubuntu-latest  # 运行环境：GitHub 提供的免费虚拟机
-    
+  show-changes:
+    runs-on: ubuntu-latest
     steps:
-      - name: Check out code  # 第一步：拉取仓库代码
+      - name: Check out code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # 关键：默认只拉取最后一次提交，设为2才能对比前一次提交
 
-      - name: Run a script    # 第二步：执行自定义命令
-        run: echo "Hello, GitHub Actions! The code is pushed."
+      - name: List changed files
+        run: |
+          echo "以下是本次提交修改的文件列表："
+          git diff --name-only HEAD^ HEAD
